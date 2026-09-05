@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winter Arc Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="snow"></div>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="snowflake">❄</span>
+      <div><b>WINTER ARC</b><small>TRACKER</small></div>
+    </div>
+    <nav>
+      <button class="nav active" data-section="home">⌂ <span>Home</span></button>
+      <button class="nav" data-section="dashboard">▦ <span>Dashboard</span></button>
+      <button class="nav" data-section="habits">✓ <span>Habits</span></button>
+      <button class="nav" data-section="journal">▤ <span>Journal</span></button>
+      <button class="nav" data-section="goals">◎ <span>Goals</span></button>
+      <button class="nav" data-section="stats">◒ <span>Stats</span></button>
+    </nav>
+    <div class="quote">“Discipline today,<br>freedom tomorrow.”<small>— Your future self</small></div>
+    <button id="resetBtn" class="reset">Reset Progress</button>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">90 DAY TRANSFORMATION</p>
+        <h1>WINTER ARC</h1>
+        <p class="subtitle">Become unstoppable.</p>
+      </div>
+      <div class="date" id="today"></div>
+    </header>
+
+    <section id="home" class="section active-section">
+      <div class="hero">
+        <div>
+          <span class="pill">❄ 90 DAYS TO TRANSFORM</span>
+          <h2>Your winter starts <span>now.</span></h2>
+          <p>Show up every day. Build habits. Don't break the chain.</p>
+        </div>
+        <div class="progress-ring" id="ring"><strong id="percent">0%</strong><small>completed</small></div>
+      </div>
+
+      <div class="grid">
+        <div class="card day-card">
+          <div class="card-title">DAY TRACKER <span id="dayCount">DAY 1 / 90</span></div>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="card stat-card"><span>🔥 CURRENT STREAK</span><b id="streak">0</b><small>days</small></div>
+        <div class="card stat-card"><span>🏆 BEST STREAK</span><b id="best">0</b><small>days</small></div>
+        <div class="card stat-card"><span>📅 DAYS COMPLETED</span><b id="completed">0</b><small>of 90</small></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">DAILY HABITS <span>CHECK IN</span></div>
+        <div id="habitsList"></div>
+        <div class="hint">Complete every habit to finish today's day.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">🎯 GOALS</div>
+          <div id="goalsList"></div>
+          <div class="add-row"><input id="goalInput" placeholder="Add a goal..."><button id="addGoal">Add</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">📝 TODAY'S JOURNAL</div>
+          <textarea id="journal" placeholder="Write about your day, your progress, your thoughts..."></textarea>
+          <button id="saveJournal">Save Entry</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="section">
+      <div class="section-head"><h2>Dashboard</h2><p>Your Winter Arc at a glance.</p></div>
+      <div class="big-number"><span id="dashPercent">0%</span><small>overall completion</small></div>
+      <div class="card"><div class="card-title">PROGRESS</div><div class="bar"><i id="bar"></i></div><p id="dashText">0 of 90 days completed.</p></div>
+    </section>
+
+    <section id="habits" class="section">
+      <div class="section-head"><h2>Habits</h2><p>Small actions. Big change.</p></div>
+      <div class="card" id="habitsPage"></div>
+    </section>
+
+    <section id="journal" class="section">
+      <div class="section-head"><h2>Journal</h2><p>Your daily record.</p></div>
+      <div class="card"><textarea id="journalPage" placeholder="Write today's entry..."></textarea><button id="saveJournalPage">Save Entry</button></div>
+    </section>
+
+    <section id="goals" class="section">
+      <div class="section-head"><h2>Goals</h2><p>Decide what this winter is for.</p></div>
+      <div class="card" id="goalsPage"></div>
+    </section>
+
+    <section id="stats" class="section">
+      <div class="section-head"><h2>Stats</h2><p>Consistency beats intensity.</p></div>
+      <div class="grid stats-grid">
+        <div class="card stat-card"><span>COMPLETION</span><b id="statPercent">0%</b></div>
+        <div class="card stat-card"><span>CURRENT STREAK</span><b id="statStreak">0</b></div>
+        <div class="card stat-card"><span>BEST STREAK</span><b id="statBest">0</b></div>
+      </div>
+    </section>
+
+    <footer>© 2026 Winter Arc Tracker · Built for your next level.</footer>
+  </main>
+
+<script src="script.js"></script>
+</body>
+</html>
