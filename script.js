@@ -1,49 +1,17 @@
-const KEY="winterArc2026";
-let state=JSON.parse(localStorage.getItem(KEY)||"null")||{
-  completedDays:[], currentDay:1, habits:{}, goals:["Study / Deep Work","Exercise","Read","Sleep on time"], journal:"", best:0
-};
+
+const KEY="winterArcV2";let state=JSON.parse(localStorage.getItem(KEY)||"{}");
+state.habits??={};state.days??={};state.sleep??=[];state.calendar??={};state.reviews??={};let selectedDay=1;
+function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHome()}
+function toast(x){let t=document.querySelector(".toast");if(!t)return;t.textContent=x;t.style.display="block";setTimeout(()=>t.style.display="none",1400)}
+function renderDays(){let w=document.querySelector("#days");if(!w)return;w.innerHTML="";for(let i=1;i<=90;i++){let b=document.createElement("button");b.className="day"+(state.days[i]?" done":"")+(i===selectedDay?" selected":"");b.textContent=i;b.onclick=()=>{selectedDay=i;renderDays();renderHabits()};w.appendChild(b)}}
 const habitNames=["Study / Deep Work","Workout / Exercise","Read Books","Sleep on Time","No Unnecessary Scrolling"];
-
-function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
-function pct(){return Math.round(state.completedDays.length/90*100)}
-function streak(){let s=0;for(let i=state.completedDays.length-1;i>=0;i--){if(state.completedDays[i]===state.completedDays.length-i)s++;else break}return s}
-
-function render(){
-  const p=pct(), s=streak();
-  document.getElementById("percent").textContent=p+"%";
-  document.getElementById("ring").style.setProperty("--p",p+"%");
-  document.getElementById("completed").textContent=state.completedDays.length;
-  document.getElementById("streak").textContent=s;
-  document.getElementById("best").textContent=Math.max(state.best,s);
-  document.getElementById("dayCount").textContent=`DAY ${state.currentDay} / 90`;
-  document.getElementById("dashPercent").textContent=p+"%";
-  document.getElementById("dashText").textContent=`${state.completedDays.length} of 90 days completed.`;
-  document.getElementById("bar").style.width=p+"%";
-  document.getElementById("statPercent").textContent=p+"%";
-  document.getElementById("statStreak").textContent=s;
-  document.getElementById("statBest").textContent=Math.max(state.best,s);
-  document.getElementById("journal").value=state.journal||"";
-  document.getElementById("journalPage").value=state.journal||"";
-
-  const days=document.getElementById("days"); days.innerHTML="";
-  for(let i=1;i<=90;i++){let b=document.createElement("button");b.className="day "+(i===state.currentDay?"current ":"")+(state.completedDays.includes(i)?"done":"");b.textContent=i;b.onclick=()=>{state.currentDay=i;save()};days.appendChild(b)}
-  renderHabits(document.getElementById("habitsList"));
-  renderHabits(document.getElementById("habitsPage"));
-  renderGoals(document.getElementById("goalsList"));
-  renderGoals(document.getElementById("goalsPage"));
-}
-function renderHabits(el){if(!el)return;el.innerHTML="";habitNames.forEach((name,i)=>{
-  const key=state.currentDay+"-"+i, done=!!state.habits[key];
-  const row=document.createElement("div");row.className="habit "+(done?"done":"");
-  row.innerHTML=`<button class="check">${done?"✓":""}</button><span class="name">${name}</span><small>${done?"DONE":"TODO"}</small>`;
-  row.querySelector(".check").onclick=()=>{state.habits[key]=!done;if(state.habits[key] && i===habitNames.length-1){if(!state.completedDays.includes(state.currentDay))state.completedDays.push(state.currentDay);state.completedDays.sort((a,b)=>a-b);state.best=Math.max(state.best,streak())}save()};el.appendChild(row)
-})}
-function renderGoals(el){if(!el)return;el.innerHTML="";state.goals.forEach((g,i)=>{let d=document.createElement("div");d.className="goal";d.innerHTML=`<label><input type="checkbox"> ${g}</label>`;d.querySelector("input").onchange=e=>d.classList.toggle("done",e.target.checked);el.appendChild(d)})}
-
-document.querySelectorAll(".nav").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".section").forEach(s=>s.classList.remove("active-section"));document.getElementById(btn.dataset.section).classList.add("active-section");document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));btn.classList.add("active")});
-document.getElementById("addGoal").onclick=()=>{let v=document.getElementById("goalInput").value.trim();if(v){state.goals.push(v);document.getElementById("goalInput").value="";save()}};
-function saveJ(){state.journal=document.getElementById("journal").value||document.getElementById("journalPage").value;save();alert("Journal saved ✨")}
-document.getElementById("saveJournal").onclick=saveJ;document.getElementById("saveJournalPage").onclick=saveJ;
-document.getElementById("resetBtn").onclick=()=>{if(confirm("Reset all Winter Arc progress?")){localStorage.removeItem(KEY);location.reload()}};
-document.getElementById("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
-render();
+function renderHabits(){let w=document.querySelector("#habits");if(!w)return;state.habits[selectedDay]??={};w.innerHTML=habitNames.map((h,i)=>`<div class="habit"><input class="check" type="checkbox" data-h="${i}" ${state.habits[selectedDay][i]?"checked":""}><span>${h}</span><small class="todo">${state.habits[selectedDay][i]?"DONE":"TODO"}</small></div>`).join("");w.querySelectorAll(".check").forEach(c=>c.onchange=()=>{state.habits[selectedDay][c.dataset.h]=c.checked;state.days[selectedDay]=habitNames.every((_,i)=>state.habits[selectedDay][i]);save();renderDays();renderHabits();toast(state.days[selectedDay]?"Day completed ✓":"Habit updated")})}
+function updateHome(){let n=Object.values(state.days).filter(Boolean).length,p=Math.round(n/90*100);let x=document.querySelector("#homeProgress");if(x)x.textContent=p+"%";x=document.querySelector("#homeBar");if(x)x.style.width=p+"%";let ds=Object.keys(state.days).map(Number).filter(n=>state.days[n]).sort((a,b)=>a-b),best=0,run=0,last=-99;ds.forEach(n=>{run=n===last+1?run+1:1;best=Math.max(best,run);last=n});x=document.querySelector("#bestStreak");if(x)x.textContent=best;x=document.querySelector("#completedDays");if(x)x.textContent=n}
+function renderSleep(){let w=document.querySelector("#sleepList");if(!w)return;w.innerHTML=state.sleep.slice().reverse().map((x,r)=>`<div class="sleepRow"><span>${x.date}<br><small class="muted">${x.note||""}</small></span><b>${x.duration}</b><button class="btn" data-del="${state.sleep.length-1-r}">×</button></div>`).join("")||'<p class="muted">No sleep entries yet.</p>';w.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{state.sleep.splice(+b.dataset.del,1);save();renderSleep()})}
+document.querySelector("#sleepForm")?.addEventListener("submit",e=>{e.preventDefault();let f=new FormData(e.target),s=f.get("start"),en=f.get("end"),duration="—";if(s&&en){let [sh,sm]=s.split(":").map(Number),[eh,em]=en.split(":").map(Number),mins=eh*60+em-(sh*60+sm);if(mins<0)mins+=1440;duration=Math.floor(mins/60)+"h "+mins%60+"m"}state.sleep.push({date:f.get("date")||new Date().toISOString().slice(0,10),duration,note:f.get("note")||""});save();renderSleep();e.target.reset();toast("Sleep saved ✓")});
+const monthData={oct:{name:"OCTOBER",days:31,start:4},nov:{name:"NOVEMBER",days:30,start:0},dec:{name:"DECEMBER",days:31,start:2}};
+function renderMonth(m){let c=document.querySelector("#cal-"+m);if(!c)return;let d=monthData[m],key="2026-"+m;c.innerHTML=`<div class="monthTitle">${d.name} 2026</div><div class="calendar">${["SUN","MON","TUE","WED","THU","FRI","SAT"].map(x=>`<div class="calHead">${x}</div>`).join("")}</div>`;let g=c.querySelector(".calendar");for(let i=0;i<d.start;i++)g.insertAdjacentHTML("beforeend",'<div class="date empty"></div>');for(let day=1;day<=d.days;day++){let id=key+"-"+day;g.insertAdjacentHTML("beforeend",`<button class="date ${state.calendar[id]?"done":""}" data-date="${id}">${day}</button>`)}g.querySelectorAll(".date:not(.empty)").forEach(b=>b.onclick=()=>{let id=b.dataset.date;state.calendar[id]=!state.calendar[id];save();renderMonth(m);toast(state.calendar[id]?"Completed ✓":"Unchecked")})}
+document.querySelectorAll(".monthTabs [data-m]").forEach(b=>b.onclick=()=>{document.querySelectorAll(".monthTabs [data-m]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");document.querySelectorAll(".monthPanel").forEach(x=>x.classList.toggle("active",x.id==="panel-"+b.dataset.m))});
+function loadReviews(){document.querySelectorAll(".reviewForm").forEach(f=>{let m=f.dataset.month,r=state.reviews[m]||{};f.goal.value=r.goal||"";f.achieved.value=r.achieved||"";f.improve.value=r.improve||"";f.onsubmit=e=>{e.preventDefault();state.reviews[m]={goal:f.goal.value,achieved:f.achieved.value,improve:f.improve.value};save();toast(m.toUpperCase()+" review saved ✓")}})}
+document.querySelectorAll("[data-review]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-review]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");document.querySelectorAll("#review .monthPanel").forEach(x=>x.classList.toggle("active",x.id==="review-"+b.dataset.review))});
+renderDays();renderHabits();renderSleep();["oct","nov","dec"].forEach(renderMonth);loadReviews();updateHome();
