@@ -1,8 +1,8 @@
-const CACHE = 'winter-arc-v5';
+const CACHE = 'winter-arc-v6';
 const ASSETS = [
   './', './index.html', './sleep.html', './calendar.html', './review.html', './about.html',
   './style-v4.css', './script-v4.js', './manifest.webmanifest', './winter-theme.png',
-  './icon-192.png', './icon-512.png', './apple-touch-icon.png'
+  './icon-192.png', './icon-512.png', './icon-1024.png', './apple-touch-icon.png'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
